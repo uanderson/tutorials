@@ -1,0 +1,20 @@
+plugins {
+  id 'java-library'
+}
+
+repositories {
+  jcenter()
+}
+
+dependencies {
+  implementation 'io.undertow:undertow-core:2.0.30.Final'
+  implementation 'io.undertow:undertow-websockets-jsr:2.0.30.Final'
+
+  testImplementation 'org.awaitility:awaitility:4.0.2'
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.1'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.1'
+}
+
+test {
+  useJUnitPlatform()
+}
