@@ -33,17 +33,18 @@ public class EchoTest {
     undertowPort = serverSocket.getLocalPort();
     serverSocket.close();
 
+    var listener = new AbstractReceiveListener() {
+      @Override
+      protected void onFullTextMessage(WebSocketChannel channel, BufferedTextMessage message) {
+        WebSockets.sendText(message.getData(), channel, null);
+      }
+    };
+
     undertow = Undertow.builder()
       .addHttpListener(undertowPort, "localhost")
       .setHandler(path()
         .addPrefixPath("/echo", websocket((exchange, channel) -> {
-          channel.getReceiveSetter().set(new AbstractReceiveListener() {
-            @Override
-            protected void onFullTextMessage(WebSocketChannel channel, BufferedTextMessage message) {
-              WebSockets.sendText(message.getData(), channel, null);
-            }
-          });
-
+          channel.getReceiveSetter().set(listener);
           channel.resumeReceives();
         })))
       .build();
@@ -60,15 +61,18 @@ public class EchoTest {
   @DisplayName("Should echo the message")
   void echoTheMessage() throws Exception {
     var echoed = new AtomicBoolean(false);
+    var listener = new WebSocket.Listener() {
+      @Override
+      public CompletionStage<Void> onText(WebSocket webSocket, CharSequence data, boolean last) {
+        webSocket.request(1);
+        return CompletableFuture.completedFuture(data)
+          .thenAccept(o -> echoed.set("Spread love. With a wonderful message.".contentEquals(o)));
+      }
+    };
+
+    var uri = URI.create("ws://localhost:" + undertowPort + "/echo");
     var webSocket = HttpClient.newHttpClient().newWebSocketBuilder()
-      .buildAsync(URI.create("ws://localhost:" + undertowPort + "/echo"), new WebSocket.Listener() {
-        @Override
-        public CompletionStage<Void> onText(WebSocket webSocket, CharSequence data, boolean last) {
-          webSocket.request(1);
-          return CompletableFuture.completedFuture(data)
-            .thenAccept(o -> echoed.set("Spread love. With a wonderful message.".contentEquals(o)));
-        }
-      })
+      .buildAsync(uri, listener)
       .get();
 
     webSocket.sendText("Spread love. ", false);
