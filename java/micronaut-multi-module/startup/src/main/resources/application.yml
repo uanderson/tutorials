@@ -1,3 +1,7 @@
 micronaut:
   application:
     name: micronaut-multi-module
+  executors:
+    scheduled:
+      type: scheduled
+      core-pool-size: 30
