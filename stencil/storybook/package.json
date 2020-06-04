@@ -1,0 +1,38 @@
+{
+  "name": "storybook",
+  "version": "0.0.1",
+  "description": "Stencil Component Starter",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "es2015": "dist/esm/index.mjs",
+  "es2017": "dist/esm/index.mjs",
+  "types": "dist/types/index.d.ts",
+  "collection": "dist/collection/collection-manifest.json",
+  "collection:main": "dist/collection/index.js",
+  "unpkg": "dist/storybook/storybook.js",
+  "files": [
+    "dist/",
+    "loader/"
+  ],
+  "scripts": {
+    "build": "stencil build --docs",
+    "start": "stencil build --dev --watch --serve",
+    "test": "stencil test --spec --e2e",
+    "test.watch": "stencil test --spec --e2e --watchAll",
+    "generate": "stencil generate",
+    "storybook": "start-storybook -s ./dist -p 6006"
+  },
+  "devDependencies": {
+    "@babel/core": "7.10.2",
+    "@stencil/core": "1.12.2",
+    "@storybook/html": "5.3.19",
+    "@types/jest": "24.9.1",
+    "@types/puppeteer": "2.0.1",
+    "babel-loader": "8.1.0",
+    "jest": "24.9.0",
+    "jest-cli": "24.9.0",
+    "prettier": "2.0.5",
+    "puppeteer": "2.1.1"
+  },
+  "license": "MIT"
+}
